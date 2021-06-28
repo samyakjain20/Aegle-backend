@@ -11,6 +11,7 @@ const Webinar = require('./models/webinar');
 const Appointment = require('./models/appointments');
 const multer = require('multer');
 const Slot = require('./models/slot');
+var cron = require('node-cron'); // schedule trigger
 
 const { requireAuth, checkUser } = require('./auth/authMiddleware');
 const authController = require('./auth/authController');
@@ -172,7 +173,7 @@ app.post('/contact', (req,res) =>{
   })
   const mailOptions = {
       from: 'samyak.21810494@viit.ac.in',
-      to: req.body.email,
+      to: 'samyak.21810494@viit.ac.in',
       subject: `Message from ${req.body.name}: ${req.body.subject}`,
       text: `Mail from ${req.body.email}. ${req.body.message}`
   }
@@ -201,7 +202,6 @@ app.get('/schedule', (req,res) => {
 
 app.post('/schedule', (req, res, next) => {
   console.log(req.body);
-
   
   // const tranporter = nodemailer.createTransport({
   //   service: 'gmail',
@@ -270,32 +270,6 @@ app.post('/schedule', (req, res, next) => {
     });
 })
 
-// app.post('/updateSlot/:id/:id1', (req, res,)  => {
-//   console.log(req.params.id,req.params.id1);
-
-//   Slot.find()
-//     .then((result) => {
-//       var a = req.params.id;
-//       var b = result[0][a];
-      
-//       var tSlot = req.params.id;
-//       console.log(b,b[tSlot])
-//       b[tSlot] = true;
-      
-//       Slot.findByIdAndUpdate(result[0]._id,{ $set: {
-//         'today': b
-//       }})
-//       .then((result)=>{
-//         console.log(result);
-//       })
-//       .catch((err) => {
-//           console.log(err);
-//       });  
-//     });
-// })
-
-// app.use('/api/', require('./views/controllers/hello'))   
-
 //zoom 
 // const rp = require('request-promise');
 // const jwt = require('jsonwebtoken');
@@ -342,6 +316,54 @@ app.post('/schedule', (req, res, next) => {
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+
+cron.schedule('1 00 00 * * 0', () => { //sunday
+  console.log('running on Sundays');
+  Slot.find()
+    .then((result) => {
+      var temp =  { '9.00 AM': false, '1.00 PM': false, '2.00 PM': false } 
+      var temp1 =  { '9.00 AM': true, '1.00 PM': true, '2.00 PM': true } 
+      Slot.findByIdAndUpdate(result[0]._id,{ $set: { 'today': temp, 'tomorrow': temp1 }})
+      .then((result)=>{
+        console.log(result);
+      })
+      .catch((err) => {
+          console.log(err);
+      });  
+    });
+});
+
+cron.schedule('1 00 00 * * 6', () => { //saturday
+  console.log('running on Saturday');
+  Slot.find()
+    .then((result) => {
+      var temp =  { '9.00 AM': false, '1.00 PM': false, '2.00 PM': false } 
+      var b = result[0]['tomorrow'];
+      Slot.findByIdAndUpdate(result[0]._id,{ $set: { 'today': b, 'tomorrow': temp }})
+      .then((result)=>{
+        console.log(result);
+      })
+      .catch((err) => {
+          console.log(err);
+      });  
+    });
+});
+
+cron.schedule('1 00 00 * * 1-5', () => { //Mon,Tue,Wed,Thu,Fri
+  console.log('running on Mon,Tue,Wed,Thu,Fri');
+  Slot.find()
+    .then((result) => {
+      var temp =  { '9.00 AM': true, '1.00 PM': true, '2.00 PM': true } 
+      var b = result[0]['tomorrow'];
+      Slot.findByIdAndUpdate(result[0]._id,{ $set: { 'today': b, 'tomorrow': temp }})
+      .then((result)=>{
+        console.log(result);
+      })
+      .catch((err) => {
+          console.log(err);
+      });  
+    });
 });
 
 // error handler
