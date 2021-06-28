@@ -7,7 +7,6 @@
   },
   "engines": {
     "node": "15.1.0",
-    "npm": "7.0.8"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
