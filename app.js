@@ -269,32 +269,6 @@ app.post('/schedule', (req, res, next) => {
     .catch((err) => {
         console.log(err);
     });
-    Slot.find()
-    .then((result) => {
-      var a = req.body.day;
-      var b = result[0][a];
-      var tSlot = req.body.time;
-      b[tSlot] = false;
-      console.log(b);
-      if(a==="today"){
-        Slot.findByIdAndUpdate(result[0]._id,{ $set: { "today" : b }})
-      .then((result)=>{
-        console.log(result);
-      })
-      .catch((err) => {
-          console.log(err);
-      });
-      }
-      else{
-        Slot.findByIdAndUpdate(result[0]._id,{ $set: { "tomorrow" : b }})
-      .then((result)=>{
-        console.log(result);
-      })
-      .catch((err) => {
-          console.log(err);
-      });
-      } 
-    });
 })
 
 //zoom 
