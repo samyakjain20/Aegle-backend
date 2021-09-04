@@ -167,13 +167,13 @@ app.post('/contact', (req,res) =>{
   const tranporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'samyak.21810494@viit.ac.in',
-        pass: "aegleproject200"
+        user: '',
+        pass: ""
     }
   })
   const mailOptions = {
-      from: 'samyak.21810494@viit.ac.in',
-      to: 'samyak.21810494@viit.ac.in',
+      from: '',
+      to: '',
       subject: `Message from ${req.body.name}: ${req.body.subject}`,
       text: `Mail from ${req.body.email}. ${req.body.message}`
   }
